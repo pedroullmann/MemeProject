@@ -28,7 +28,8 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
         configNavbar(isEnable: false)
         configButtons()
         configDelegates()
-        configTextFields()
+        setupTextField(tf: bottomTextField, text: "BOTTOM")
+        setupTextField(tf: topTextField, text: "TOP")
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -70,7 +71,8 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
     }
     
     @objc func cancelTapped() {
-        configTextFields()
+        setupTextField(tf: bottomTextField, text: "BOTTOM")
+        setupTextField(tf: topTextField, text: "TOP")
         configNavbar(isEnable: false)
         imagePicker.image = UIImage()
     }
@@ -90,21 +92,18 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
         bottomTextField.delegate = self
     }
     
-    private func configTextFields() {
-        let memeTextAttributes:[String:Any] = [
-            NSAttributedStringKey.strokeColor.rawValue: UIColor.white,
-            NSAttributedStringKey.foregroundColor.rawValue: UIColor.white,
-            NSAttributedStringKey.font.rawValue: UIFont(name: "HelveticaNeue-CondensedBlack", size: 40)!,
-            NSAttributedStringKey.strokeWidth.rawValue: 3.0]
-        
-        topTextField.defaultTextAttributes = memeTextAttributes
-        topTextField.textAlignment = .center
-        
-        bottomTextField.defaultTextAttributes = memeTextAttributes
-        bottomTextField.textAlignment = .center
-        
-        topTextField.text = "TOP"
-        bottomTextField.text = "BOTTOM"
+    private func setupTextField(tf: UITextField, text: String) {
+        tf.defaultTextAttributes = [
+            NSAttributedStringKey.foregroundColor.rawValue : UIColor.white,
+            NSAttributedStringKey.strokeColor.rawValue : UIColor.black,
+            NSAttributedStringKey.font.rawValue : UIFont(name: "HelveticaNeue-CondensedBlack", size: 40)!,
+            NSAttributedStringKey.strokeWidth.rawValue: -4.0,
+        ]
+        tf.textColor = UIColor.white
+        tf.tintColor = UIColor.white
+        tf.textAlignment = .center
+        tf.text = text
+        tf.delegate = self
     }
     
     // MARK: NotificationCenter
@@ -115,11 +114,15 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
     }
     
     @objc func keyboardWillShow(_ notification: Notification) {
-        view.frame.origin.y = -getKeyboardHeight(notification)
+        if bottomTextField.isFirstResponder {
+            view.frame.origin.y -= getKeyboardHeight(notification)
+        }
     }
     
     @objc func keyboardWillHide(_ notification: Notification) {
-        view.frame.origin.y = 0.0
+        if bottomTextField.isFirstResponder {
+            view.frame.origin.y = 0
+        }
     }
     
     private func subscribeToKeyboardNotifications() {
