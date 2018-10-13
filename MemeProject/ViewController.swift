@@ -27,7 +27,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
         super.viewDidLoad()
         configNavbar(isEnable: false)
         configButtons()
-        configDelegates()
+        imagePickerController.delegate = self
         setupTextField(tf: bottomTextField, text: "BOTTOM")
         setupTextField(tf: topTextField, text: "TOP")
     }
@@ -86,12 +86,6 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
         cameraButton.isEnabled = UIImagePickerController.isSourceTypeAvailable(.camera)
     }
     
-    private func configDelegates() {
-        imagePickerController.delegate = self
-        topTextField.delegate = self
-        bottomTextField.delegate = self
-    }
-    
     private func setupTextField(tf: UITextField, text: String) {
         tf.defaultTextAttributes = [
             NSAttributedStringKey.foregroundColor.rawValue : UIColor.white,
@@ -99,8 +93,6 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
             NSAttributedStringKey.font.rawValue : UIFont(name: "HelveticaNeue-CondensedBlack", size: 40)!,
             NSAttributedStringKey.strokeWidth.rawValue: -4.0,
         ]
-        tf.textColor = UIColor.white
-        tf.tintColor = UIColor.white
         tf.textAlignment = .center
         tf.text = text
         tf.delegate = self
@@ -115,7 +107,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
     
     @objc func keyboardWillShow(_ notification: Notification) {
         if bottomTextField.isFirstResponder {
-            view.frame.origin.y -= getKeyboardHeight(notification)
+            view.frame.origin.y = -getKeyboardHeight(notification)
         }
     }
     
