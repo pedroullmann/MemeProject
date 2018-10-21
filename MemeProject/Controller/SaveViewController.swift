@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  SaveViewController.swift
 //  MemeProject
 //
 //  Created by Pedro Ullmann on 10/6/18.
@@ -8,11 +8,14 @@
 
 import UIKit
 
-class ViewController: UIViewController, UINavigationControllerDelegate {
+class SaveViewController: UIViewController, UINavigationControllerDelegate {
 
     // MARK: Variables
     private let imagePickerController = UIImagePickerController()
     private var memedImage = UIImage()
+    override var prefersStatusBarHidden: Bool {
+        return true
+    }
     
     // MARK: Outlets
     @IBOutlet weak var imagePicker: UIImageView!
@@ -66,6 +69,17 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
         let activityViewController = UIActivityViewController(activityItems: imageToShare, applicationActivities: nil)
         activityViewController.popoverPresentationController?.sourceView = self.view
         activityViewController.excludedActivityTypes = [ UIActivityType.airDrop, UIActivityType.postToFacebook ]
+        
+        activityViewController.completionWithItemsHandler = {
+            (_, completed, _, _) in
+            
+            let object = UIApplication.shared.delegate
+            if let appDelegate = object as? AppDelegate {
+                appDelegate.memes.append(memedImage)
+            }
+            
+            self.dismiss(animated: true, completion: nil)
+        }
         
         self.present(activityViewController, animated: true, completion: nil)
     }
@@ -169,12 +183,13 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
                         bottomText: bottomTextField.text!,
                         originalImage: imagePicker.image!,
                         memedImage: memedImage)
+        
         return meme
     }
 }
 
 // MARK: UIImagePickerControllerDelegate
-extension ViewController: UIImagePickerControllerDelegate {
+extension SaveViewController: UIImagePickerControllerDelegate {
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         dismiss(animated: true, completion: nil)
     }
@@ -191,7 +206,7 @@ extension ViewController: UIImagePickerControllerDelegate {
 }
 
 // MARK: TextFieldDelegate
-extension ViewController: UITextFieldDelegate {
+extension SaveViewController: UITextFieldDelegate {
     func textFieldDidBeginEditing(_ textField: UITextField) {
         textField.text = ""
     }
