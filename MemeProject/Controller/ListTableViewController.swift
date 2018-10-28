@@ -13,6 +13,7 @@ class ListTableViewController: UITableViewController {
     // MARK: Properties
     private let numberOfSections = 1
     private let cellIdentifier = "memeTableCell"
+    private let detailSegueIdentifier = "viewDetailSegue"
     var memes: [Meme]! {
         let object = UIApplication.shared.delegate
         let appDelegate = object as! AppDelegate
@@ -63,6 +64,15 @@ class ListTableViewController: UITableViewController {
         self.present(vc, animated: true, completion: nil)
     }
     
+    // MARK: Navigation
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == detailSegueIdentifier,
+            let detailVC = segue.destination as? DetailViewController,
+            let model = sender as? Meme {
+            detailVC.memeModel = model
+        }
+    }
+    
     // MARK: DataSource
     override func numberOfSections(in tableView: UITableView) -> Int {
         return numberOfSections
@@ -85,6 +95,11 @@ class ListTableViewController: UITableViewController {
     // MARK: Delegates
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 90.0
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let meme = memes[indexPath.row]
+        performSegue(withIdentifier: detailSegueIdentifier, sender: meme)
     }
 }
 

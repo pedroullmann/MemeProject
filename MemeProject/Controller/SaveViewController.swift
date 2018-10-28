@@ -73,6 +73,10 @@ class SaveViewController: UIViewController, UINavigationControllerDelegate {
         activityViewController.completionWithItemsHandler = {
             (_, completed, _, _) in
             
+            if !completed {
+                return
+            }
+            
             let object = UIApplication.shared.delegate
             if let appDelegate = object as? AppDelegate {
                 appDelegate.memes.append(memedImage)
@@ -89,6 +93,7 @@ class SaveViewController: UIViewController, UINavigationControllerDelegate {
         setupTextField(tf: topTextField, text: "TOP")
         configNavbar(isEnable: false)
         imagePicker.image = UIImage()
+        self.dismiss(animated: true, completion: nil)
     }
     
     private func hidingElements(isHidden: Bool) {
